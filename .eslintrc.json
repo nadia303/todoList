@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "@wemake-services/typescript/recommended"
+  ],
+    "rules": {
+    "@typescript-eslint/indent": ["error", 2]
+  }
+}
