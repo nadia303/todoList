@@ -6,7 +6,7 @@ import { TodoStatus } from "../types/status"
 
 const initialState: TodosInitialState = {
   todos: [],
-  maxTodoLength: 100
+  maxTodoLength: 50
 }
 
 export const todoSlice = createSlice({

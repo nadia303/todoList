@@ -105,8 +105,8 @@ export const Todo: FC<TodoProps> = ({
             </Typography.Title>
             {isHovered &&
               <Space style={{ height: '24px' }}  >
-                <Button type="link" onClick={handleEdit} icon={<EditOutlined style={{ color: "#1890ff", fontSize: "16px" }} />} />
-                <Button type="link" onClick={handleDelete} icon={<DeleteOutlined style={{ color: "#ff4d4f", fontSize: "16px" }} />} />
+                <Button type="text" style={{ color: "blue" }} onClick={handleEdit} icon={<EditOutlined />} />
+                <Button type="text" style={{ color: "red" }} onClick={handleDelete} icon={<DeleteOutlined />} />
               </Space>
             }
           </Space>}

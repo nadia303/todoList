@@ -64,7 +64,7 @@ export const AddEditTodo: FC<AddTodoProps> = ({
               ]}
               style={{ width: '100%' }}
             >
-              <Input style={{ fontWeight: "600" }} />
+              <Input style={{ fontWeight: "600" }} autoFocus />
             </Form.Item>
           </Col>
           <Col span={8}>

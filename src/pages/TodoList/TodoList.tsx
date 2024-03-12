@@ -9,6 +9,7 @@ import {
   Radio,
   Button,
   Divider,
+  Flex,
 } from "antd"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux"
@@ -30,6 +31,9 @@ export const TodoList: React.FC = () => {
   const formRef = useRef<HTMLDivElement>(null)
   const dispatch = useDispatch()
 
+  const completedTodos = getFilteredTodos(todos, FilterTypes.COMPLETED).length
+  const notCompletedTodos = getFilteredTodos(todos, FilterTypes.NOT_COMPLETED).length
+
   const handleOnAddTodo = (): void => {
     setIsEditMode(true)
     isButtonClicked.current = true
@@ -40,9 +44,6 @@ export const TodoList: React.FC = () => {
     dispatch(addTodo({ name, status }))
     setIsEditMode(false)
   }, [])
-
-  const completedTodos = getFilteredTodos(todos, FilterTypes.COMPLETED).length
-  const notCompletedTodos = getFilteredTodos(todos, FilterTypes.NOT_COMPLETED).length
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -61,61 +62,67 @@ export const TodoList: React.FC = () => {
 
 
   return (
-    <Layout style={{ backgroundColor: "#ffffff", minHeight: "100vh", }}>
-      <Content style={{
+    <Flex gap="middle" align="center" vertical>
+      <Layout style={{
+        backgroundColor: "#ffffff",
+        minHeight: "100vh", overflow: 'hidden',
+        width: "100%",
+        maxWidth: '1200px',
         padding: 40,
       }}>
-        <Space direction="horizontal" align="center">
-          <Title level={2} type="secondary" >
+        <Content>
+          <Space direction="horizontal" align="center">
+            <Title level={2} type="secondary" >
             Todo List
-          </Title>
-        </Space>
-        <Row align="middle" style={{ marginBottom: '24px' }}>
-          <Col span={12}>
-            <Space direction="horizontal" >
-              <Radio.Group
-                onChange={(e): void => setFilterType(e.target.value)}
-                value={filterType}
+            </Title>
+          </Space>
+          <Row align="middle" style={{ marginBottom: '24px' }}>
+            <Col span={12}>
+              <Space direction="horizontal" >
+                <Radio.Group
+                  onChange={(e): void => setFilterType(e.target.value)}
+                  value={filterType}
+                >
+                  <Radio.Button value={FilterTypes.ALL}>All ({todos.length})</Radio.Button>
+                  <Radio.Button value={FilterTypes.COMPLETED}>Completed ({completedTodos})</Radio.Button>
+                  <Radio.Button value={FilterTypes.NOT_COMPLETED}>Not Completed ({notCompletedTodos})</Radio.Button>
+                </Radio.Group>
+              </Space>
+            </Col>
+            {filterType !== FilterTypes.COMPLETED && <Col span={12} style={{ display: "flex", justifyContent: "end" }}>
+              <Button
+                type="primary"
+                disabled={isEditMode}
+                onClick={handleOnAddTodo}
+                style={{
+                  width: "50px",
+                }}
               >
-                <Radio.Button value={FilterTypes.ALL}>All ({todos.length})</Radio.Button>
-                <Radio.Button value={FilterTypes.COMPLETED}>Completed ({completedTodos})</Radio.Button>
-                <Radio.Button value={FilterTypes.NOT_COMPLETED}>Not Completed ({notCompletedTodos})</Radio.Button>
-              </Radio.Group>
-            </Space>
-          </Col>
-          {filterType !== FilterTypes.COMPLETED && <Col span={12} style={{ display: "flex", justifyContent: "end" }}>
-            <Button
-              type="primary"
-              disabled={isEditMode}
-              onClick={handleOnAddTodo}
-              style={{
-                width: "50px",
-              }}
-            >
               +
-            </Button>
-          </Col>}
-        </Row>
-        {isEditMode && <div ref={formRef}>
-          <AddEditTodo
-            setIsEditMode={setIsEditMode}
-            onSubmit={handleOnCreate}
+              </Button>
+            </Col>}
+          </Row>
+          {isEditMode && <div ref={formRef}>
+            <AddEditTodo
+              setIsEditMode={setIsEditMode}
+              onSubmit={handleOnCreate}
+            />
+          </div>}
+          <Divider type="horizontal" />
+          <List
+            dataSource={getFilteredTodos(todos, filterType)}
+            renderItem={({ id, name, status }): React.ReactNode => {
+              return (
+                <List.Item key={id}>
+                  <Todo todoId={id}
+                    name={name}
+                    status={status} />
+                </List.Item>
+              )
+            }}
           />
-        </div>}
-        <Divider type="horizontal" />
-        <List
-          dataSource={getFilteredTodos(todos, filterType)}
-          renderItem={({ id, name, status }): React.ReactNode => {
-            return (
-              <List.Item key={id}>
-                <Todo todoId={id}
-                  name={name}
-                  status={status} />
-              </List.Item>
-            )
-          }}
-        />
-      </Content>
-    </Layout>
+        </Content>
+      </Layout>
+    </Flex>
   )
 }
