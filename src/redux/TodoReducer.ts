@@ -1,21 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { ITodo } from "../types/todo"
 import { generateId } from "../helpers/generateId"
+import { TodoStatus } from "../types/status"
 
 
 const initialState: TodosInitialState = {
-  todos: []
+  todos: [],
+  maxTodoLength: 100
 }
 
 export const todoSlice = createSlice({
-  name: 'issue',
+  name: 'todo',
   initialState,
   reducers: {
     addTodo: (state, action: PayloadAction<Omit<ITodo, 'id'>>) => {
-      const newTodo = { ...action.payload, id: generateId() }
+      const newTodo = { ...action.payload, id: generateId(), status: TodoStatus.NOT_COMPLETED }
       state.todos = [...state.todos, newTodo]
     },
-    updateTodo: (state, action: PayloadAction<ITodo>) => {
+    updateTodo: (state, action: PayloadAction<Partial<ITodo>>) => {
       const updatedTodoIndex = state.todos.findIndex(el => el.id === action.payload.id)
 
       if (updatedTodoIndex !== -1) {
@@ -32,6 +34,7 @@ export const todoSlice = createSlice({
 
 export interface TodosInitialState {
   todos: ITodo[]
+  maxTodoLength: number
 }
 
 export const { addTodo, updateTodo, deleteTodo } = todoSlice.actions

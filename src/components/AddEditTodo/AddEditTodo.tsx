@@ -1,34 +1,27 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect } from "react"
-import { Button, Form, Input, Space, Modal, Select } from "antd"
-import { ITodo } from "../../types/todo"
+import { Button, Form, Input, Space, Col, Row } from "antd"
 import { TodoStatus } from "../../types/status"
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux"
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons"
 
 interface AddTodoProps {
   setIsEditMode: Dispatch<SetStateAction<boolean>>
-  onSubmit: (data: ITodo) => void
-  initialValues?: { name: string, status: TodoStatus }
-  visible: boolean
-  title?: string
-  status: TodoStatus
-  todoId?: string
-
+  onSubmit: (data: { name?: string, status?: TodoStatus }) => void
+  initialValues?: { name: string }
 }
 
 export const AddEditTodo: FC<AddTodoProps> = ({
   setIsEditMode,
   onSubmit,
   initialValues,
-  visible,
-  title = "Add Todo",
-  status,
-  todoId
 }) => {
   const [form] = Form.useForm()
+  const { maxTodoLength } = useSelector((state: RootState) => state.todos)
 
   const handleSubmit = useCallback(
-    (data: ITodo) => {
-      const todoWithId = todoId ? { ...data, id: todoId } : { ...data, status }
-      onSubmit(todoWithId)
+    (data: { name?: string, status?: TodoStatus }) => {
+      onSubmit(data)
       form.resetFields()
       setIsEditMode(false)
     },
@@ -47,66 +40,45 @@ export const AddEditTodo: FC<AddTodoProps> = ({
   }, [initialValues, form])
 
   return (
-    <Modal
-      title={title}
-      open={visible}
-      footer={null}
-      onCancel={handleCancel}
-      destroyOnClose
-    >
+    <Row style={{ paddingTop: "20px" }}>
       <Form
         form={form}
         name="validateOnly"
-        layout="vertical"
         autoComplete="off"
         onFinish={handleSubmit}
+        style={{ width: "500px" }}
       >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Please enter todo name",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        {initialValues &&
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[
-              {
-                required: true,
-                message: "Please select todo status",
-              },
-            ]}
-          >
-            <Select
-              defaultValue={form.getFieldValue("status")}
-              onChange={(value: TodoStatus): void => {
-                form.setFieldsValue({ status: value })
-              }} options={[
-                { value: TodoStatus.NOT_COMPLETED, label: 'Not completed' },
-                { value: TodoStatus.COMPLETED, label: 'Completed' },
+        <Row gutter={16} align="top" >
+          <Col span={16}>
+            <Form.Item
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter todo name",
+                },
+                {
+                  max: maxTodoLength,
+                  message: `Todo text exceeds the maximum allowed length of ${maxTodoLength} characters`,
+                },
               ]}
-            />
-          </Form.Item>}
-        <Space style={{ justifyContent: "flex-end", marginTop: "8px" }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <Button
-            type="primary"
-            onClick={handleCancel}
-            style={{ backgroundColor: "#faad14", borderColor: "#faad14" }}
-          >
-            Cancel
-          </Button>
-        </Space>
+              style={{ width: '100%' }}
+            >
+              <Input style={{ fontWeight: "600" }} />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Space >
+              <Button type="text" htmlType="submit" style={{ color: "green" }} icon={< CheckOutlined />}
+              />
+              <Button
+                type="text" onClick={handleCancel} style={{ color: "red" }}
+                icon={<CloseOutlined />}
+              />
+            </Space>
+          </Col>
+        </Row>
       </Form>
-    </Modal>
+    </Row >
   )
 }
