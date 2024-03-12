@@ -23,7 +23,6 @@ export const todoSlice = createSlice({
       if (updatedTodoIndex !== -1) {
         state.todos[updatedTodoIndex] = { ...state.todos[updatedTodoIndex], ...action.payload }
       }
-
     },
     deleteTodo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload

@@ -86,7 +86,7 @@ export const Todo: FC<TodoProps> = ({
 
   return (
     <>
-      <Space style={{ height: "40px" }}>
+      <Space style={{ height: "40px", minWidth: "100%" }}>
         {isEditTodo ?
           <div ref={formRef}>
             <AddEditTodo setIsEditMode={setIsEditTodo} onSubmit={handleSubmit} initialValues={{ name: name }} />

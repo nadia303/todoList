@@ -108,7 +108,7 @@ export const TodoList: React.FC = () => {
               onSubmit={handleOnCreate}
             />
           </div>}
-          <Divider type="horizontal" />
+          <Divider type="horizontal" style={{marginBottom: 0}} />
           <List
             dataSource={getFilteredTodos(todos, filterType)}
             renderItem={({ id, name, status }): React.ReactNode => {
